@@ -1,0 +1,2 @@
+org.apache.whirr.service.example.FlumeMasterHandler
+org.apache.whirr.service.example.FlumeNodeHandler
