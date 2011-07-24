@@ -4,7 +4,7 @@ To run the demo you need an EC2 account and you should set the AWS_ACCESS_KEY_ID
 and AWS_SECRET_ACCESS_KEY environment properties. Then follow these
 instructions:
 
-1. Install Whirr (version 0.4.0-incubating)
+1. Download and install the latest version of Whirr
 2. Build this project using "mvn clean install"
 3. Copy the generated JAR file to Whirr's lib directory
 4. From the Whirr installation directory, run

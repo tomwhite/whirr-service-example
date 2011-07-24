@@ -18,19 +18,16 @@
 
 package org.apache.whirr.service.example;
 
-import static org.apache.whirr.service.RolePredicates.role;
+import static org.apache.whirr.RolePredicates.role;
 import static org.jclouds.scriptbuilder.domain.Statements.call;
 
 import java.io.IOException;
 
-import org.apache.whirr.service.Cluster;
-import org.apache.whirr.service.Cluster.Instance;
+import org.apache.whirr.Cluster;
+import org.apache.whirr.Cluster.Instance;
 import org.apache.whirr.service.ClusterActionEvent;
 import org.apache.whirr.service.ClusterActionHandlerSupport;
-import org.apache.whirr.service.ClusterSpec;
-import org.apache.whirr.service.ComputeServiceContextBuilder;
-import org.apache.whirr.service.jclouds.FirewallSettings;
-import org.jclouds.compute.ComputeServiceContext;
+import org.apache.whirr.service.FirewallManager.Rule;
 
 public class FlumeNodeHandler extends ClusterActionHandlerSupport {
 
@@ -49,13 +46,10 @@ public class FlumeNodeHandler extends ClusterActionHandlerSupport {
   @Override
   protected void beforeConfigure(ClusterActionEvent event) throws IOException,
       InterruptedException {
-    ClusterSpec clusterSpec = event.getClusterSpec();
+    event.getFirewallManager().addRule(
+        Rule.create().destination(role(ROLE)).port(CLIENT_PORT)
+    );
     Cluster cluster = event.getCluster();
-    ComputeServiceContext computeServiceContext =
-      ComputeServiceContextBuilder.build(clusterSpec);
-    FirewallSettings.authorizeIngress(computeServiceContext,
-        cluster.getInstancesMatching(role(ROLE)), clusterSpec, CLIENT_PORT);
-
     Instance master = cluster.getInstanceMatching(role(FlumeMasterHandler.ROLE));
     String masterAddress = master.getPrivateAddress().getHostAddress();
     addStatement(event, call("configure_flumedemo_node", masterAddress));
